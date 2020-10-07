@@ -1,0 +1,222 @@
+<app-sidenav></app-sidenav>
+
+<div class="WrapperArea">
+    <div class="WrapperBox">
+        <div class="Small-Wrapper">
+
+
+            <h4 class="Title">Employee Management</h4>
+            <div class="Filter">
+                <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+                    <div class="form-group">
+                        <label>From Employee ID</label>
+                        <input type="text" class="form-control" formControlName="fromEmpId">
+                        <p class="valdoyst" style="color: #FF0000"
+                            *ngIf="searchCheck && searchForm.controls.fromEmpId.hasError('required')">
+                            From Employee ID is required
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label>To Employee ID</label>
+                        <input type="text" class="form-control" formControlName="toEmpId">
+                        <p class="valdoyst" style="color: #FF0000"
+                            *ngIf="searchCheck && searchForm.controls.toEmpId.hasError('required')">
+                            To Employee ID is required
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button class="Button">Apply</button>
+                    </div>
+                    <div class="SearchBox" style="margin-top: 27px;">
+                        <a class="Blue" (click)="exportToCsv()" style="cursor: pointer;">
+                            <i class="fa fa-download"></i>
+                        </a>
+                        <a class="Blue" data-toggle="modal" data-target="#AddModal" style="cursor: pointer;">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="TableList">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Employee Id</th>
+                            <th>Name of the user </th>
+                            <th>Address</th>
+                            <th>Earnings </th>
+                            <th>Deduction </th>
+                            <th>TotalPay </th>
+                            <th>Qualification </th>
+                            <th>action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of employes; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>{{data?.employeeId}}</td>
+                            <td>{{data?.name}}</td>
+                            <td>{{data?.address}}</td>
+                            <td>{{data?.earnings}}</td>
+                            <td>{{data?.deduction}}</td>
+                            <td>{{data?.totalPay}}</td>
+                            <td>{{data?.qualification}}</td>
+                            <td>
+                                <a style="cursor: pointer;" class="Blue" (click)="getDetail(data._id)"
+                                    data-toggle="modal" data-target="#EditModal">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <a style="cursor: pointer;" class="Red" (click)="employeeId =data._id"
+                                    data-toggle="modal" data-target="#DeleteModal">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="ModalBox">
+
+    <div id="AddModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <a class="CloseModal" data-dismiss="modal">×</a>
+                    <div class="Category">
+                        <h3>Add Employee </h3>
+                        <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+                            <div class="form-group">
+                                <label>Name </label>
+                                <input type="text" class="form-control" placeholder="Name" formControlName="name">
+                                <p class="valdoyst" style="color: #FF0000"
+                                    *ngIf="employeeSubmitCheck && employeeForm.controls.name.hasError('required')">
+                                    Name is required
+                                </p>
+                            </div>
+                            <div class="form-group">
+                                <label>Address </label>
+                                <textarea type="text" class="form-control" placeholder="Address"
+                                    formControlName="address"></textarea>
+                                <p class="valdoyst" style="color: #FF0000"
+                                    *ngIf="employeeSubmitCheck && employeeForm.controls.address.hasError('required')">
+                                    Address is required
+                                </p>
+                            </div>
+                            <div class="form-group">
+                                <label>Address 1 </label>
+                                <textarea type="text" class="form-control" placeholder="Address1"
+                                    formControlName="address1"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Earnings </label>
+                                <input type="text" class="form-control" placeholder="Earnings" (keyup)="calculatePay()"
+                                    formControlName="earnings">
+                            </div>
+                            <div class="form-group">
+                                <label>Deduction </label>
+                                <input type="text" class="form-control" placeholder="Deduction" (keyup)="calculatePay()"
+                                    formControlName="deduction">
+                            </div>
+                            <div class="form-group">
+                                <label>Total Pay </label>
+                                <input type="text" class="form-control" placeholder="Total Pay"
+                                    formControlName="totalPay">
+                            </div>
+                            <div class="form-group">
+                                <label>Qualification </label>
+                                <input type="text" class="form-control" placeholder="Qualification"
+                                    formControlName="qualification">
+                            </div>
+                            <button type="submit" class="Button">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="EditModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <a class="CloseModal" data-dismiss="modal">×</a>
+                    <div class="Category">
+                        <h3>Edit Employee </h3>
+                        <form [formGroup]="editEmployeeForm" (ngSubmit)="onEditSubmit()">
+                            <div class="form-group">
+                                <label>Name </label>
+                                <input type="text" class="form-control" placeholder="Name" formControlName="name">
+                                <p class="valdoyst" style="color: #FF0000"
+                                    *ngIf="employeeEditCheck && editEmployeeForm.controls.name.hasError('required')">
+                                    Name is required
+                                </p>
+                            </div>
+                            <div class="form-group">
+                                <label>Address </label>
+                                <textarea type="text" class="form-control" placeholder="Address"
+                                    formControlName="address"></textarea>
+                                <p class="valdoyst" style="color: #FF0000"
+                                    *ngIf="employeeSubmitCheck && editEmployeeForm.controls.address.hasError('required')">
+                                    Address is required
+                                </p>
+                            </div>
+                            <div class="form-group">
+                                <label>Address 1 </label>
+                                <textarea type="text" class="form-control" placeholder="Address1"
+                                    formControlName="address1"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Earnings </label>
+                                <input type="text" class="form-control" placeholder="Earnings"
+                                    (keyup)="editCalculatePay()" formControlName="earnings">
+                            </div>
+                            <div class="form-group">
+                                <label>Deduction </label>
+                                <input type="text" class="form-control" placeholder="Deduction"
+                                    (keyup)="editCalculatePay()" formControlName="deduction">
+                            </div>
+                            <div class="form-group">
+                                <label>Total Pay </label>
+                                <input type="text" class="form-control" placeholder="Total Pay"
+                                    formControlName="totalPay">
+                            </div>
+                            <div class="form-group">
+                                <label>Qualification </label>
+                                <input type="text" class="form-control" placeholder="Qualification"
+                                    formControlName="qualification">
+                            </div>
+                            <button type="submit" class="Button">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="DeleteModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="Decline">
+                        <a class="CloseModal" data-dismiss="modal">×</a>
+                        <h3>Delete</h3>
+                        <p>Are you sure you want to delete this employee ?</p>
+                        <h4>
+                            <a data-dismiss="modal">no</a>
+                            <a data-dismiss="modal" (click)="deleteEmp()">Yes</a>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
